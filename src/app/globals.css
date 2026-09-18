@@ -1,0 +1,72 @@
+@import 'tailwindcss';
+
+/*
+  Dropfolio's palette is borrowed from the thing it tracks. CS2 encodes an item's grade in a
+  colour bar, and players read those colours faster than they read text — so the same ramp is
+  reused here as *data*, never as decoration: consumer-grade silver for cases, restricted
+  purple for skins, mil-spec blue for graffiti, and mil-spec blue again as the single
+  interactive accent. Everything else is gunmetal so those bars are the only saturated thing
+  on screen.
+*/
+@theme {
+  --color-abyss: #0e1116;
+  --color-surface: #161a21;
+  --color-raised: #1d222b;
+  --color-line: #272d38;
+  --color-line-strong: #39424f;
+
+  --color-ink: #e4e8ef;
+  --color-ink-dim: #a3adbd;
+  --color-ink-muted: #7d8899;
+
+  --color-accent: #4b69ff;
+  --color-accent-soft: #2b3560;
+  --color-positive: #2fbf71;
+  --color-caution: #e8a33d;
+  --color-danger: #e3555a;
+
+  --color-grade-case: #b0c3d9;
+  --color-grade-skin: #8847ff;
+  --color-grade-graffiti: #4b69ff;
+
+  --font-sans: var(--font-chivo), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 10px;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-abyss);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Money and counts sit in columns; lining tabular figures keep them aligned. */
+  .numeric {
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-accent-soft);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
