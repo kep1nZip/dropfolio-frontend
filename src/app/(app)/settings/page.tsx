@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Field, Input, Toggle } from '@/components/ui/Field';
+import { Field, Input, PasswordInput, Toggle } from '@/components/ui/Field';
 import { Modal } from '@/components/ui/Modal';
 import { ErrorState, LoadingState } from '@/components/ui/States';
 import { Badge } from '@/components/ui/Badge';
@@ -184,9 +184,8 @@ function PasswordCard() {
       <div className="flex flex-col gap-4 px-5 py-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Current password" htmlFor="currentPassword">
-            <Input
+            <PasswordInput
               id="currentPassword"
-              type="password"
               autoComplete="current-password"
               value={current}
               onChange={(event) => setCurrent(event.target.value)}
@@ -197,9 +196,8 @@ function PasswordCard() {
             htmlFor="newPassword"
             hint="At least 8 characters, with a letter and a number."
           >
-            <Input
+            <PasswordInput
               id="newPassword"
-              type="password"
               autoComplete="new-password"
               value={next}
               onChange={(event) => setNext(event.target.value)}

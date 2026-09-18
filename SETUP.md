@@ -126,6 +126,13 @@ Rules the code holds to:
 - **The envelope is unwrapped once**, in `lib/api-client`. Nothing else writes `response.data.data`.
 - **Errors are normalised once**, into `ApiError` with `category` + `code` per §0.6.
 - **A missing price is never `$0`.** `priceAvailable: false` renders an em dash (PRD §45).
+- **Item icons can never crash a page.** `items.icon_url` is free text an admin types in, so
+  its hostname is unknowable at build time. `next/image` throws *during render* for any host
+  missing from `next.config.ts`, which kills the whole React tree rather than just the
+  thumbnail. `ItemThumb` therefore classifies the URL first: Steam CDN hosts go through
+  `next/image`, any other `http(s)` URL renders as a plain `<img>`, and a bad URL or a failed
+  load falls back to the grade-tinted initial tile. Adding hostnames to `next.config.ts` is
+  **not** the fix — no allowlist can ever cover a free-text field.
 
 ---
 
@@ -210,5 +217,10 @@ done in Next.js middleware (§6 above).
   by hand, matching ERD Open Decision #2. The UI offers that action plainly rather than hiding it.
 - **`unreadCount` polls every 60 seconds.** There is no WebSocket in the MVP (§14), so the badge
   can lag by up to a minute.
+- **Item icons from non-Steam hosts are not optimized.** They render through a plain `<img>`,
+  so no resizing or WebP conversion. At 36px this costs essentially nothing, and it is what
+  makes an unknown hostname safe. If the catalog ever standardises on a fixed set of CDNs, add
+  them to `OPTIMIZED_IMAGE_HOSTS` in `src/lib/image-hosts.ts` and they are optimized
+  automatically — `next.config.ts` reads the same list.
 - **Steam linking is absent by design** (§15: Steam is a price source only, never an identity
   provider). `steamIntegration` is displayed where the API returns it, but nothing links an account.

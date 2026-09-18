@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
-import { Field, Input } from '@/components/ui/Field';
+import { Field, Input, PasswordInput } from '@/components/ui/Field';
 import { getErrorMessage } from '@/lib/api-error';
 import { useLogin } from '../hooks';
 import { loginSchema, type LoginFormValues } from '../validation';
@@ -31,9 +31,8 @@ export function LoginForm() {
       </Field>
 
       <Field label="Password" htmlFor="password" error={errors.password?.message}>
-        <Input
+        <PasswordInput
           id="password"
-          type="password"
           autoComplete="current-password"
           invalid={Boolean(errors.password)}
           {...register('password')}

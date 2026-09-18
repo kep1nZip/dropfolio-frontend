@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
-import { Field, Input } from '@/components/ui/Field';
+import { Field, Input, PasswordInput } from '@/components/ui/Field';
 import { getErrorMessage } from '@/lib/api-error';
 import { useRegister } from '../hooks';
 import { registerSchema, type RegisterFormValues } from '../validation';
@@ -65,9 +65,8 @@ export function RegisterForm() {
         error={errors.password?.message}
         hint="At least 8 characters, with a letter and a number."
       >
-        <Input
+        <PasswordInput
           id="password"
-          type="password"
           autoComplete="new-password"
           invalid={Boolean(errors.password)}
           {...register('password')}
