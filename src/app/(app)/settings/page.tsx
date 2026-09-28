@@ -6,7 +6,7 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Field, Input, PasswordInput, Toggle } from '@/components/ui/Field';
 import { Modal } from '@/components/ui/Modal';
-import { ErrorState, LoadingState } from '@/components/ui/States';
+import { ErrorState, Skeleton } from '@/components/ui/States';
 import { Badge } from '@/components/ui/Badge';
 import { useToast } from '@/components/ui/Toast';
 import { getErrorMessage } from '@/lib/api-error';
@@ -26,7 +26,7 @@ import {
 export default function SettingsPage() {
   const user = useCurrentUser();
 
-  if (user.isPending) return <LoadingState />;
+  if (user.isPending) return <SettingsSkeleton />;
   if (user.isError) return <ErrorState error={user.error} onRetry={() => void user.refetch()} />;
 
   return (
@@ -44,6 +44,29 @@ export default function SettingsPage() {
       <NotificationPreferencesCard />
       <PasswordCard />
       <DangerZone />
+    </div>
+  );
+}
+
+/** Mirrors the four cards this page renders once the profile loads: shape without content. */
+function SettingsSkeleton() {
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-6 w-28" />
+        <Skeleton className="h-4 w-56" />
+      </div>
+      {[1, 2, 3].map((section) => (
+        <Card key={section}>
+          <div className="flex items-center justify-between border-b border-line px-5 py-4">
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <div className="flex flex-col gap-3 px-5 py-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-2/3" />
+          </div>
+        </Card>
+      ))}
     </div>
   );
 }
@@ -132,7 +155,10 @@ function NotificationPreferencesCard() {
       />
       <div className="px-5 py-4">
         {preferences.isPending ? (
-          <LoadingState label="Loading preferences" />
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
         ) : preferences.isError ? (
           <ErrorState error={preferences.error} onRetry={() => void preferences.refetch()} />
         ) : (

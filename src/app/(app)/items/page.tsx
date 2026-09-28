@@ -9,7 +9,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
 import { Table, Td, Th, Tr } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/States';
+import { EmptyState, ErrorState, TableSkeleton } from '@/components/ui/States';
 import { ItemThumb } from '@/components/ui/ItemThumb';
 import { Badge, ItemTypeTag } from '@/components/ui/Badge';
 import { Select } from '@/components/ui/Field';
@@ -68,7 +68,14 @@ export default function ItemsPage() {
 
       <Card>
         {query.isPending ? (
-          <LoadingState />
+          <TableSkeleton
+            columns={[
+              { header: 'Item', width: 'w-40' },
+              { header: 'Type', width: 'w-16' },
+              { header: 'Market hash name', width: 'w-48' },
+              { header: 'Status', width: 'w-16' },
+            ]}
+          />
         ) : query.isError ? (
           <ErrorState error={query.error} onRetry={() => void query.refetch()} />
         ) : query.data.items.length === 0 ? (
@@ -93,7 +100,7 @@ export default function ItemsPage() {
                     <Td>
                       <Link
                         href={`/items/${item.id}`}
-                        className="flex items-center gap-3 hover:text-accent"
+                        className="flex items-center gap-3 hover:text-accent-text"
                       >
                         <ItemThumb name={item.name} type={item.type} iconUrl={item.iconUrl} />
                         <span className="text-sm">{item.name}</span>

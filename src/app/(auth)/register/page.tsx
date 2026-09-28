@@ -1,7 +1,28 @@
 import type { Metadata } from 'next';
 import { RegisterForm } from '@/features/auth/components/RegisterForm';
+import { env } from '@/lib/env';
 
-export const metadata: Metadata = { title: 'Create an account · Dropfolio' };
+const TITLE = 'Create an account';
+const DESCRIPTION = 'Create a free Dropfolio account to start tracking your CS2 drops.';
+
+export const metadata: Metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: `${env.siteUrl}/register` },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: `${TITLE} · Dropfolio`,
+    description: DESCRIPTION,
+    url: `${env.siteUrl}/register`,
+    siteName: 'Dropfolio',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${TITLE} · Dropfolio`,
+    description: DESCRIPTION,
+  },
+};
 
 export default function RegisterPage() {
   return (

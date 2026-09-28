@@ -51,7 +51,7 @@ export function LoginForm() {
 
       <p className="text-center text-sm text-ink-muted">
         New here?{' '}
-        <Link href="/register" className="text-accent hover:underline">
+        <Link href="/register" className="text-accent-text hover:underline">
           Create an account
         </Link>
       </p>

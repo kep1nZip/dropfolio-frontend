@@ -11,7 +11,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Pagination } from '@/components/ui/Pagination';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/States';
+import { EmptyState, ErrorState, ListSkeleton } from '@/components/ui/States';
 import { formatRelativeTime } from '@/utils/format';
 
 export default function NotificationsPage() {
@@ -51,7 +51,7 @@ export default function NotificationsPage() {
 
       <Card>
         {query.isPending ? (
-          <LoadingState />
+          <ListSkeleton />
         ) : query.isError ? (
           <ErrorState error={query.error} onRetry={() => void query.refetch()} />
         ) : query.data.items.length === 0 ? (
@@ -93,6 +93,9 @@ export default function NotificationsPage() {
                       <Button
                         variant="ghost"
                         size="sm"
+                        // One mutation instance serves every row, so `isPending` alone would put a
+                        // spinner on all of them. `variables` is the id actually in flight.
+                        loading={markRead.isPending && markRead.variables === notification.id}
                         disabled={markRead.isPending}
                         onClick={() => markRead.mutate(notification.id)}
                       >

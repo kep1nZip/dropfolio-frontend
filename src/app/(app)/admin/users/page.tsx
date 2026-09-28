@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { Select } from '@/components/ui/Field';
 import { Table, Td, Th, Tr } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/States';
+import { EmptyState, ErrorState, TableSkeleton } from '@/components/ui/States';
 import { UserStatusBadge } from '@/components/ui/Badge';
 import { formatDate } from '@/utils/format';
 import type { UserStatus } from '@/types/domain';
@@ -61,7 +61,14 @@ export default function AdminUsersPage() {
 
       <Card>
         {query.isPending ? (
-          <LoadingState />
+          <TableSkeleton
+            columns={[
+              { header: 'User', width: 'w-32' },
+              { header: 'Email', width: 'w-48' },
+              { header: 'Status', width: 'w-20' },
+              { header: 'Joined', width: 'w-20' },
+            ]}
+          />
         ) : query.isError ? (
           <ErrorState error={query.error} onRetry={() => void query.refetch()} />
         ) : query.data.items.length === 0 ? (
@@ -81,7 +88,7 @@ export default function AdminUsersPage() {
                 {query.data.items.map((user) => (
                   <Tr key={user.id}>
                     <Td>
-                      <Link href={`/admin/users/${user.id}`} className="text-sm hover:text-accent">
+                      <Link href={`/admin/users/${user.id}`} className="text-sm hover:text-accent-text">
                         {user.displayName}
                       </Link>
                     </Td>

@@ -7,7 +7,7 @@ import { useAdminUser, useUpdateUserStatus } from '@/features/admin/hooks';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { UserStatusBadge } from '@/components/ui/Badge';
-import { ErrorState, LoadingState } from '@/components/ui/States';
+import { ErrorState, Skeleton } from '@/components/ui/States';
 import { useToast } from '@/components/ui/Toast';
 import { getErrorMessage } from '@/lib/api-error';
 import { formatDateTime, formatNumber } from '@/utils/format';
@@ -18,7 +18,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
   const updateStatus = useUpdateUserStatus();
   const { notify } = useToast();
 
-  if (user.isPending) return <LoadingState />;
+  if (user.isPending) return <AdminUserDetailSkeleton />;
   if (user.isError) return <ErrorState error={user.error} onRetry={() => void user.refetch()} />;
 
   const deactivated = user.data.status === 'DEACTIVATED';
@@ -83,6 +83,33 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
             value={user.data.steamIntegration ? 'Linked' : 'Not linked'}
           />
         </dl>
+      </Card>
+    </div>
+  );
+}
+
+/** Mirrors the loaded layout: back link, name row with the status action, then the detail card. */
+function AdminUserDetailSkeleton() {
+  return (
+    <div className="flex flex-col gap-5">
+      <Skeleton className="h-4 w-20" />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-6 w-40" />
+          <Skeleton className="h-4 w-52" />
+        </div>
+        <Skeleton className="h-10 w-36" />
+      </div>
+      <Card>
+        <CardHeader title="Account" />
+        <div className="grid gap-px bg-line sm:grid-cols-2">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="flex items-center justify-between gap-4 bg-surface px-5 py-3">
+              <Skeleton className="h-3.5 w-24" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+          ))}
+        </div>
       </Card>
     </div>
   );

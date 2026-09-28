@@ -41,7 +41,7 @@ export function DropFormModal({
       title={isEdit ? 'Edit drop' : 'Add a drop'}
       description={
         isEdit
-          ? 'The item itself is fixed — delete and re-add if you logged the wrong one.'
+          ? 'The item cannot be changed. Delete this drop and add it again if you picked the wrong one.'
           : 'Log something you picked up. Dropfolio prices it from the Steam Market.'
       }
     >

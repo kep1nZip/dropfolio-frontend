@@ -1,27 +1,37 @@
 'use client';
 
 import Link from 'next/link';
+import { Bell, Boxes, LibraryBig, PieChart } from 'lucide-react';
 import { usePortfolioSummary } from '@/features/portfolio/hooks';
 import { useDrops } from '@/features/drops/hooks';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { ItemTypeTag } from '@/components/ui/Badge';
 import { ItemThumb } from '@/components/ui/ItemThumb';
 import { Table, Td, Th, Tr } from '@/components/ui/Table';
-import { EmptyState, ErrorState, LoadingState, Skeleton } from '@/components/ui/States';
+import { EmptyState, ErrorState, Skeleton, TableSkeleton } from '@/components/ui/States';
 import { Button } from '@/components/ui/Button';
 import { formatDate, formatNumber, formatUsd } from '@/utils/format';
+
+const QUICK_ACTIONS = [
+  { href: '/drops', label: 'Add a drop', description: 'Log something you picked up', icon: Boxes },
+  { href: '/alerts', label: 'Create an alert', description: 'Watch a price target', icon: Bell },
+  { href: '/portfolio', label: 'View portfolio', description: 'See what it adds up to', icon: PieChart },
+  { href: '/items', label: 'Browse catalog', description: 'Everything Dropfolio can price', icon: LibraryBig },
+] as const;
 
 export default function DashboardPage() {
   const recentDrops = useDrops({ page: 1, size: 5, sort: 'acquisitionDate,desc' });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <PortfolioValue />
 
       <div className="grid gap-4 lg:grid-cols-3">
         <WeeklyDrop />
         <Statistics />
       </div>
+
+      <QuickActions />
 
       <Card>
         <CardHeader
@@ -36,7 +46,15 @@ export default function DashboardPage() {
           }
         />
         {recentDrops.isPending ? (
-          <LoadingState />
+          <TableSkeleton
+            rows={5}
+            columns={[
+              { header: 'Item', width: 'w-40' },
+              { header: 'Acquired', width: 'w-20' },
+              { header: 'Qty', width: 'w-8', numeric: true },
+              { header: 'Current value', width: 'w-16', numeric: true },
+            ]}
+          />
         ) : recentDrops.isError ? (
           <ErrorState error={recentDrops.error} onRetry={() => void recentDrops.refetch()} />
         ) : recentDrops.data.items.length === 0 ? (
@@ -89,6 +107,33 @@ export default function DashboardPage() {
 }
 
 /**
+ * Every action here maps to a route and a piece of functionality that already exists — this
+ * is a set of doors into the app, not a new feature. The dashboard should tell a first-time
+ * user what they can do without them having to find the sidebar first.
+ */
+function QuickActions() {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {QUICK_ACTIONS.map(({ href, label, description, icon: Icon }) => (
+        <Link
+          key={href}
+          href={href}
+          className="group flex items-start gap-3 rounded-card border border-line bg-surface px-4 py-3.5 transition-[transform,background-color,border-color] hover:-translate-y-0.5 hover:border-line-strong hover:bg-raised"
+        >
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-accent/15 text-accent-text">
+            <Icon size={16} />
+          </span>
+          <span className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium text-ink">{label}</span>
+            <span className="text-xs text-ink-muted">{description}</span>
+          </span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+/**
  * The hero. One number, set large, with the caveat attached directly to it rather than hidden
  * in a tooltip — PRD §45: a portfolio total computed from partly-unpriced items has to say so.
  */
@@ -115,7 +160,7 @@ function PortfolioValue() {
   return (
     <Card className="px-6 py-8">
       <p className="text-sm text-ink-muted">Total portfolio value</p>
-      <p className="numeric mt-2 text-5xl font-semibold tracking-tight text-ink">
+      <p className="numeric stat-hero mt-2 font-semibold tracking-tight text-ink">
         {formatUsd(data.totalValueUsd)}
       </p>
       <div className="mt-4 h-px w-16 bg-accent" />
@@ -144,13 +189,13 @@ function WeeklyDrop() {
           <>
             <div className="flex items-baseline gap-5">
               <span className="flex flex-col">
-                <span className="numeric text-2xl font-semibold text-ink">
+                <span className="numeric stat-tile font-semibold text-ink">
                   {data?.weeklyDrop?.caseCount ?? 0}
                 </span>
                 <span className="text-xs text-ink-muted">cases</span>
               </span>
               <span className="flex flex-col">
-                <span className="numeric text-2xl font-semibold text-ink">
+                <span className="numeric stat-tile font-semibold text-ink">
                   {data?.weeklyDrop?.skinOrGraffitiCount ?? 0}
                 </span>
                 <span className="text-xs text-ink-muted">skins &amp; graffiti</span>

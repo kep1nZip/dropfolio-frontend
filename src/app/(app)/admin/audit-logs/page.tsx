@@ -9,7 +9,7 @@ import { Field, Input } from '@/components/ui/Field';
 import { Button } from '@/components/ui/Button';
 import { Table, Td, Th, Tr } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/States';
+import { EmptyState, ErrorState, TableSkeleton } from '@/components/ui/States';
 import { formatDateTime } from '@/utils/format';
 
 interface Filters {
@@ -75,7 +75,15 @@ export default function AdminAuditLogsPage() {
 
       <Card>
         {query.isPending ? (
-          <LoadingState />
+          <TableSkeleton
+            columns={[
+              { header: 'When', width: 'w-28' },
+              { header: 'Action', width: 'w-40' },
+              { header: 'Actor', width: 'w-10', numeric: true },
+              { header: 'Entity', width: 'w-24' },
+              { header: 'IP', width: 'w-20' },
+            ]}
+          />
         ) : query.isError ? (
           <ErrorState error={query.error} onRetry={() => void query.refetch()} />
         ) : query.data.items.length === 0 ? (

@@ -12,9 +12,9 @@ export function Badge({
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium',
+        'inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium',
         tone === 'neutral' && 'bg-raised text-ink-dim',
-        tone === 'accent' && 'bg-accent/15 text-accent',
+        tone === 'accent' && 'bg-accent/15 text-accent-text',
         tone === 'positive' && 'bg-positive/15 text-positive',
         tone === 'caution' && 'bg-caution/15 text-caution',
         tone === 'danger' && 'bg-danger/15 text-danger',
@@ -29,7 +29,8 @@ export function Badge({
  * The item type is shown as a CS2 grade bar rather than a coloured pill: it is the one piece
  * of information players scan for, and the bar reads at a glance down a long column.
  */
-const GRADE_COLOR: Record<ItemType, string> = {
+/** Exported so other components (the portfolio holdings chart) can reuse the same bar colours. */
+export const GRADE_COLOR: Record<ItemType, string> = {
   CASE: 'bg-grade-case',
   SKIN: 'bg-grade-skin',
   GRAFFITI: 'bg-grade-graffiti',

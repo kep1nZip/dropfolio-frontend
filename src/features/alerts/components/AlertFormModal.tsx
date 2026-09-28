@@ -68,7 +68,7 @@ function AlertForm({ alert, onClose }: { alert?: Alert; onClose: () => void }) {
     // §9: an alert with no channel can never reach anyone, so the backend rejects it. Saying so
     // here is friendlier than a 422.
     if (!notifyEmail && !notifyInApp) {
-      setFormError('Pick at least one way to be told — email or in-app.');
+      setFormError('Pick at least one way to be told: email, in-app, or both.');
       return;
     }
 

@@ -13,7 +13,7 @@ import { Field, Input, Select, Toggle } from '@/components/ui/Field';
 import { Modal } from '@/components/ui/Modal';
 import { Table, Td, Th, Tr } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/States';
+import { EmptyState, ErrorState, TableSkeleton } from '@/components/ui/States';
 import { ItemThumb } from '@/components/ui/ItemThumb';
 import { Badge, ItemTypeTag } from '@/components/ui/Badge';
 import { useToast } from '@/components/ui/Toast';
@@ -72,7 +72,15 @@ export default function AdminItemsPage() {
 
       <Card>
         {query.isPending ? (
-          <LoadingState />
+          <TableSkeleton
+            columns={[
+              { header: 'Item', width: 'w-40' },
+              { header: 'Type', width: 'w-16' },
+              { header: 'Market hash name', width: 'w-48' },
+              { header: 'Status', width: 'w-16' },
+              { header: '', width: 'w-8', numeric: true },
+            ]}
+          />
         ) : query.isError ? (
           <ErrorState error={query.error} onRetry={() => void query.refetch()} />
         ) : query.data.items.length === 0 ? (
@@ -212,7 +220,7 @@ function ItemForm({ item, onClose }: { item?: Item; onClose: () => void }) {
     }
 
     if (marketHashName.trim() === '') {
-      setFormError('The market hash name is how prices are looked up — it is required.');
+      setFormError('The market hash name is required. It is how prices are looked up.');
       return;
     }
 

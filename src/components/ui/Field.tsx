@@ -138,7 +138,7 @@ export function PasswordInput({
         onClick={() => setRevealed((value) => !value)}
         aria-label={revealed ? 'Hide password' : 'Show password'}
         aria-pressed={revealed}
-        className="absolute right-1 top-1/2 -translate-y-1/2 rounded p-2 text-ink-muted transition-colors hover:text-ink"
+        className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md p-2 text-ink-muted transition-colors hover:text-ink"
       >
         {revealed ? <EyeOff size={16} /> : <Eye size={16} />}
       </button>

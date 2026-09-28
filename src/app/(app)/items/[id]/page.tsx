@@ -5,7 +5,7 @@ import { use } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useItem, useItemPrice } from '@/features/items/hooks';
 import { Card, CardHeader } from '@/components/ui/Card';
-import { ErrorState, LoadingState, Skeleton } from '@/components/ui/States';
+import { ErrorState, Skeleton } from '@/components/ui/States';
 import { ItemThumb } from '@/components/ui/ItemThumb';
 import { Badge, ItemTypeTag } from '@/components/ui/Badge';
 import { formatDateTime, formatRelativeTime, formatUsd } from '@/utils/format';
@@ -16,7 +16,7 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
   const item = useItem(Number.isFinite(itemId) ? itemId : null);
   const price = useItemPrice(Number.isFinite(itemId) ? itemId : null);
 
-  if (item.isPending) return <LoadingState />;
+  if (item.isPending) return <ItemDetailSkeleton />;
   if (item.isError) return <ErrorState error={item.error} onRetry={() => void item.refetch()} />;
 
   return (
@@ -54,7 +54,7 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
               <ErrorState error={price.error} onRetry={() => void price.refetch()} />
             ) : price.data.priceAvailable ? (
               <>
-                <p className="numeric text-3xl font-semibold text-ink">
+                <p className="numeric stat-secondary font-semibold text-ink">
                   {formatUsd(price.data.priceUsd)}
                 </p>
                 <p className="mt-2 text-xs text-ink-muted">
@@ -81,6 +81,38 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
             <Row label="Market hash name" value={item.data.marketHashName} />
             <Row label="Type" value={item.data.type} />
           </dl>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/** Mirrors the loaded layout's shape: thumbnail + name row, then the two-card grid below. */
+function ItemDetailSkeleton() {
+  return (
+    <div className="flex flex-col gap-5">
+      <Skeleton className="h-4 w-28" />
+      <div className="flex items-start gap-4">
+        <Skeleton className="h-16 w-16 shrink-0 rounded-md" />
+        <div className="flex flex-col gap-2 pt-1">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-4 w-32" />
+        </div>
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader title="Current market price" description="Steam Community Market, cached." />
+          <div className="px-5 py-6">
+            <Skeleton className="h-10 w-40" />
+          </div>
+        </Card>
+        <Card>
+          <CardHeader title="Catalog details" />
+          <div className="flex flex-col gap-3 px-5 py-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
         </Card>
       </div>
     </div>

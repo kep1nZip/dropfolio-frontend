@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Select } from '@/components/ui/Field';
 import { Table, Td, Th, Tr } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/States';
+import { EmptyState, ErrorState, TableSkeleton } from '@/components/ui/States';
 import { JobStatusBadge } from '@/components/ui/Badge';
 import { formatDateTime, formatNumber } from '@/utils/format';
 import type { JobStatus, JobType } from '@/types/domain';
@@ -73,7 +73,17 @@ export default function AdminSyncJobsPage() {
 
       <Card>
         {query.isPending ? (
-          <LoadingState />
+          <TableSkeleton
+            columns={[
+              { header: 'Job', width: 'w-10', numeric: true },
+              { header: 'Type', width: 'w-20' },
+              { header: 'Status', width: 'w-16' },
+              { header: 'Triggered by', width: 'w-20' },
+              { header: 'Items', width: 'w-12', numeric: true },
+              { header: 'Started', width: 'w-24' },
+              { header: 'Finished', width: 'w-24' },
+            ]}
+          />
         ) : query.isError ? (
           <ErrorState error={query.error} onRetry={() => void query.refetch()} />
         ) : query.data.items.length === 0 ? (

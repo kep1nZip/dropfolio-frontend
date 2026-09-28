@@ -19,7 +19,15 @@
   --color-ink-dim: #a3adbd;
   --color-ink-muted: #7d8899;
 
-  --color-accent: #4b69ff;
+  --color-accent: #4665ff;
+  /**
+   * Same brand blue, one step lighter — used only where the accent is text sitting directly
+   * on `abyss`/`surface` (links, "text-accent-text" utilities), never as a fill. A single accent
+   * value can't clear WCAG AA (4.5:1) in both directions at once: dark enough for white button
+   * text to read at 4.5:1+ is too dark for the accent itself to read as *text* on this near-
+   * black background at 4.5:1+. Verified: white-on-accent 4.6:1, accent-text-on-surface 4.5:1.
+   */
+  --color-accent-text: #5a76ff;
   --color-accent-soft: #2b3560;
   --color-positive: #2fbf71;
   --color-caution: #e8a33d;
@@ -32,6 +40,59 @@
   --font-sans: var(--font-chivo), ui-sans-serif, system-ui, sans-serif;
 
   --radius-card: 10px;
+}
+
+@layer utilities {
+  /**
+   * The one part of the type scale that wasn't already governed by a shared component. Page
+   * titles go through `<PageHeader>`, card/section titles through `<CardHeader>` — both
+   * enforce their size in one place. Big standalone numbers (a portfolio total, a stat tile, a
+   * price) had no such component and were drifting into ad-hoc `text-2xl`/`text-3xl`/`text-5xl`
+   * picked per call site. These three classes are that scale, named by role rather than size,
+   * so a new number picks one of exactly three tiers instead of inventing a fourth:
+   *
+   *   .stat-hero       the single most important number on a page (one per page, at most)
+   *   .stat-secondary  a large but non-hero number (an item's price, a big status figure)
+   *   .stat-tile       a small stat-card number (dashboard/portfolio/admin summary tiles)
+   *
+   * Deliberately controls size only, not weight or colour — call sites still choose those,
+   * since e.g. a tile in a caution state keeps its own colour and some tiles are intentionally
+   * lighter-weight than others. The scale is the size; everything else stays contextual.
+   */
+  .stat-hero {
+    font-size: var(--text-5xl);
+    line-height: var(--text-5xl--line-height);
+  }
+  .stat-secondary {
+    font-size: var(--text-3xl);
+    line-height: var(--text-3xl--line-height);
+  }
+  .stat-tile {
+    font-size: var(--text-2xl);
+    line-height: var(--text-2xl--line-height);
+  }
+}
+
+/*
+  Entrance motion exists for one reason: a dialog or toast that appears with no transition gives
+  the eye nothing to follow, so it reads as a glitch. Both use the same short ease-out (fast at
+  the start, settling at the end) and a 4px offset, small enough to orient without drawing
+  attention. The reduced-motion rule at the bottom of this file zeroes the duration for anyone
+  who has asked for less movement.
+*/
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-enter {
+  animation: enter 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @layer base {

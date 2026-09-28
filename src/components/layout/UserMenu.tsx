@@ -35,7 +35,7 @@ export function UserMenu() {
         aria-haspopup="menu"
         className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-ink-dim transition-colors hover:bg-raised hover:text-ink"
       >
-        <span className="flex h-6 w-6 items-center justify-center rounded bg-accent/20 text-xs font-semibold text-accent">
+        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent/20 text-xs font-semibold text-accent-text">
           {user.displayName.slice(0, 1).toUpperCase()}
         </span>
         <span className="hidden max-w-[10rem] truncate sm:inline">{user.displayName}</span>

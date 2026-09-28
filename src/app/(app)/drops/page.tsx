@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/Button';
 import { Field, Input, Select } from '@/components/ui/Field';
 import { Table, Td, Th, Tr } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/States';
+import { EmptyState, ErrorState, TableSkeleton } from '@/components/ui/States';
 import { ItemThumb } from '@/components/ui/ItemThumb';
 import { ItemTypeTag } from '@/components/ui/Badge';
 import { formatDate, formatUsd, PRICE_UNAVAILABLE } from '@/utils/format';
@@ -171,7 +171,16 @@ export default function DropsPage() {
 
       <Card>
         {query.isPending ? (
-          <LoadingState />
+          <TableSkeleton
+            columns={[
+              { header: 'Item', width: 'w-40' },
+              { header: 'Acquired', width: 'w-20' },
+              { header: 'Qty', width: 'w-8', numeric: true },
+              { header: 'Paid', width: 'w-16', numeric: true },
+              { header: 'Now', width: 'w-16', numeric: true },
+              { header: '', width: 'w-12', numeric: true },
+            ]}
+          />
         ) : query.isError ? (
           <ErrorState error={query.error} onRetry={() => void query.refetch()} />
         ) : query.data.items.length === 0 ? (

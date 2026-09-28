@@ -67,7 +67,7 @@ export function ItemPicker({
                 <span className="truncate text-sm text-ink">{item.name}</span>
                 <ItemTypeTag type={item.type} />
               </span>
-              {selected ? <Check size={15} className="shrink-0 text-accent" /> : null}
+              {selected ? <Check size={15} className="shrink-0 text-accent-text" /> : null}
             </button>
           );
         })}

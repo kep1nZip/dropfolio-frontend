@@ -12,7 +12,7 @@ import { Select } from '@/components/ui/Field';
 import { Modal } from '@/components/ui/Modal';
 import { Table, Td, Th, Tr } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/States';
+import { EmptyState, ErrorState, TableSkeleton } from '@/components/ui/States';
 import { AlertStatusBadge } from '@/components/ui/Badge';
 import { useToast } from '@/components/ui/Toast';
 import { getErrorMessage } from '@/lib/api-error';
@@ -81,7 +81,16 @@ export default function AlertsPage() {
 
       <Card>
         {query.isPending ? (
-          <LoadingState />
+          <TableSkeleton
+            columns={[
+              { header: 'Item', width: 'w-40' },
+              { header: 'Target', width: 'w-16', numeric: true },
+              { header: 'Channels', width: 'w-24' },
+              { header: 'Status', width: 'w-20' },
+              { header: 'Created', width: 'w-20' },
+              { header: '', width: 'w-24', numeric: true },
+            ]}
+          />
         ) : query.isError ? (
           <ErrorState error={query.error} onRetry={() => void query.refetch()} />
         ) : query.data.items.length === 0 ? (
@@ -137,6 +146,8 @@ export default function AlertsPage() {
                         <Button
                           variant="ghost"
                           size="sm"
+                          // Shared mutation instance: only the row whose id is in flight spins.
+                          loading={updateAlert.isPending && updateAlert.variables?.id === alert.id}
                           disabled={updateAlert.isPending}
                           onClick={() =>
                             updateAlert.mutate(

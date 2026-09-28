@@ -49,7 +49,7 @@ export function ItemThumb({
     <span
       style={{ width: size, height: size }}
       className={clsx(
-        'flex shrink-0 items-center justify-center overflow-hidden rounded border bg-raised',
+        'flex shrink-0 items-center justify-center overflow-hidden rounded-md border bg-raised',
         GRADE_BORDER[type],
       )}
     >

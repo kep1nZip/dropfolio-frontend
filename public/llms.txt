@@ -1,0 +1,22 @@
+# Dropfolio
+
+> Track what your CS2 drops are actually worth, priced against the Steam Community Market.
+
+Dropfolio is a personal portfolio tracker for Counter-Strike 2 items. A user logs the cases,
+skins, and graffiti they've picked up, and Dropfolio prices each one against the Steam
+Community Market to show total portfolio value over time. Users can also set price alerts on
+individual items and get notified when a target price is reached.
+
+## Access
+
+- Public pages: `/login`, `/register`.
+- Everything else (dashboard, portfolio, drop history, price alerts, item catalog,
+  notifications, account settings, and all admin tooling) requires a signed-in account and
+  shows data private to that account. There is nothing else here for a crawler to index.
+
+## Notes for automated agents
+
+- This site does not have public API documentation, a public changelog, or a public support
+  contact at this time. Please don't guess at or fabricate any of these — none currently exist.
+- No user data, portfolio values, or account information should be treated as accessible
+  without authentication; `robots.txt` and per-page metadata on this site both reflect that.

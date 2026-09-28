@@ -1,6 +1,7 @@
 'use client';
 
 import { Download } from 'lucide-react';
+import clsx from 'clsx';
 import { usePortfolioBreakdown, usePortfolioSummary, useExportPortfolio } from '@/features/portfolio/hooks';
 import { useListControls } from '@/hooks/useListControls';
 import { SearchBox } from '@/features/items/components/SearchBox';
@@ -11,12 +12,12 @@ import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Field';
 import { Table, Td, Th, Tr } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
-import { EmptyState, ErrorState, LoadingState, Skeleton } from '@/components/ui/States';
-import { ItemTypeTag } from '@/components/ui/Badge';
+import { EmptyState, ErrorState, Skeleton, TableSkeleton } from '@/components/ui/States';
+import { GRADE_COLOR, ItemTypeTag } from '@/components/ui/Badge';
 import { useToast } from '@/components/ui/Toast';
 import { getErrorMessage } from '@/lib/api-error';
 import { formatNumber, formatUsd, PRICE_UNAVAILABLE } from '@/utils/format';
-import type { ItemType } from '@/types/domain';
+import type { ItemType, PortfolioBreakdownItem } from '@/types/domain';
 
 const SORTS = [
   { value: 'totalValueUsd,desc', label: 'Highest value' },
@@ -96,13 +97,25 @@ export default function PortfolioPage() {
         </div>
       </div>
 
+      {!breakdown.isPending && !breakdown.isError && breakdown.data.items.length > 0 ? (
+        <HoldingsChart items={breakdown.data.items} isSinglePage={breakdown.data.meta.totalPages <= 1} />
+      ) : null}
+
       <Card>
         <CardHeader
           title="Holdings"
           description="Multiple drops of the same item are combined into one row."
         />
         {breakdown.isPending ? (
-          <LoadingState />
+          <TableSkeleton
+            columns={[
+              { header: 'Item', width: 'w-40' },
+              { header: 'Type', width: 'w-16' },
+              { header: 'Qty', width: 'w-8', numeric: true },
+              { header: 'Unit price', width: 'w-16', numeric: true },
+              { header: 'Total', width: 'w-16', numeric: true },
+            ]}
+          />
         ) : breakdown.isError ? (
           <ErrorState error={breakdown.error} onRetry={() => void breakdown.refetch()} />
         ) : breakdown.data.items.length === 0 ? (
@@ -154,6 +167,68 @@ export default function PortfolioPage() {
   );
 }
 
+/**
+ * A horizontal bar per item, sized against the highest value on the currently loaded page.
+ *
+ * This deliberately visualises "the rows in the table below" rather than "the whole
+ * portfolio" — `breakdown.data.items` is one page of a search/filter/sort the user controls,
+ * so anything claiming to be a total-portfolio chart would misrepresent it the moment a
+ * filter is active. The heading says "on this page" for the same reason. With the default
+ * sort (`totalValueUsd,desc`) and no filter, this reads naturally as "top holdings".
+ *
+ * Bars are coloured by item type using the same grade tokens as `ItemTypeTag` elsewhere in
+ * the app, so this reads as the same visual language rather than a separate charting library.
+ */
+function HoldingsChart({
+  items,
+  isSinglePage,
+}: {
+  items: PortfolioBreakdownItem[];
+  /** True only when the loaded page is the entire result set — see comment above. */
+  isSinglePage: boolean;
+}) {
+  const ranked = items
+    .filter((item) => item.priceAvailable && item.totalValueUsd !== null)
+    .sort((a, b) => (b.totalValueUsd ?? 0) - (a.totalValueUsd ?? 0))
+    .slice(0, 6);
+
+  if (ranked.length === 0) return null;
+
+  const maxValue = Math.max(...ranked.map((item) => item.totalValueUsd ?? 0));
+
+  return (
+    <Card>
+      <CardHeader
+        title="Top holdings"
+        description={
+          isSinglePage ? 'Your highest-value items.' : 'Highest-value items on this page.'
+        }
+      />
+      <ul className="flex flex-col gap-3 px-5 py-4">
+        {ranked.map((item) => {
+          const width = maxValue > 0 ? Math.max(4, ((item.totalValueUsd ?? 0) / maxValue) * 100) : 0;
+          return (
+            <li key={item.itemId} className="flex items-center gap-3">
+              <span className="w-20 shrink-0 truncate text-sm text-ink sm:w-36" title={item.name}>
+                {item.name}
+              </span>
+              <span className="h-5 flex-1 rounded-md bg-raised">
+                <span
+                  className={clsx('block h-full rounded-md', GRADE_COLOR[item.type])}
+                  style={{ width: `${width}%` }}
+                />
+              </span>
+              <span className="numeric w-20 shrink-0 text-right text-sm text-ink">
+                {formatUsd(item.totalValueUsd)}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </Card>
+  );
+}
+
 function SummaryTile({
   label,
   value,
@@ -174,8 +249,8 @@ function SummaryTile({
         <p
           className={
             emphasis
-              ? 'numeric mt-1 text-2xl font-semibold text-ink'
-              : 'numeric mt-1 text-2xl text-ink'
+              ? 'numeric stat-tile mt-1 font-semibold text-ink'
+              : 'numeric stat-tile mt-1 text-ink'
           }
         >
           {value}
@@ -203,7 +278,7 @@ function ExportButton() {
           onSuccess: (result) =>
             notify(
               result === 'empty'
-                ? 'Nothing to export yet — log a drop first.'
+                ? 'Nothing to export yet. Log a drop first.'
                 : 'Export downloaded.',
             ),
           onError: (error) => notify(getErrorMessage(error), 'error'),

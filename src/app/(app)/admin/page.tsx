@@ -11,7 +11,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge, JobStatusBadge } from '@/components/ui/Badge';
-import { ErrorState, LoadingState } from '@/components/ui/States';
+import { ErrorState, StatTileSkeleton } from '@/components/ui/States';
 import { useToast } from '@/components/ui/Toast';
 import { getErrorMessage } from '@/lib/api-error';
 import { formatNumber, formatRelativeTime } from '@/utils/format';
@@ -28,7 +28,23 @@ export default function AdminOverviewPage() {
       />
 
       {dashboard.isPending ? (
-        <LoadingState />
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Card key={index}>
+                <StatTileSkeleton />
+              </Card>
+            ))}
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card>
+              <StatTileSkeleton />
+            </Card>
+            <Card>
+              <StatTileSkeleton />
+            </Card>
+          </div>
+        </>
       ) : dashboard.isError ? (
         <ErrorState error={dashboard.error} onRetry={() => void dashboard.refetch()} />
       ) : (
@@ -103,8 +119,8 @@ function Metric({
       <p
         className={
           tone === 'caution'
-            ? 'numeric mt-1 text-2xl font-semibold text-caution'
-            : 'numeric mt-1 text-2xl font-semibold text-ink'
+            ? 'numeric stat-tile mt-1 font-semibold text-caution'
+            : 'numeric stat-tile mt-1 font-semibold text-ink'
         }
       >
         {value}

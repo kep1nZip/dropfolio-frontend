@@ -40,7 +40,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div
             key={toast.id}
             className={clsx(
-              'rounded-md border px-3 py-2 text-sm shadow-lg',
+              'animate-enter rounded-md border px-3 py-2 text-sm shadow-lg',
               toast.tone === 'success'
                 ? 'border-line bg-raised text-ink'
                 : 'border-danger/40 bg-danger/15 text-ink',
