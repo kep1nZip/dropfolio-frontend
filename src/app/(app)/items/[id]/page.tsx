@@ -9,6 +9,7 @@ import { useItemHoldings } from '@/features/drops/hooks';
 import { HoldingsSummary } from '@/features/drops/components/HoldingsSummary';
 import { PriceHistoryChart } from '@/features/items/components/PriceHistoryChart';
 import { PriceRangeSelector } from '@/features/items/components/PriceRangeSelector';
+import { SteamMarketLink } from '@/features/items/components/SteamMarketLink';
 import {
   computePriceChange,
   DEFAULT_PRICE_RANGE,
@@ -106,6 +107,7 @@ function ItemDetail({ params }: { params: Promise<{ id: string }> }) {
             )}
           </div>
         </div>
+        <SteamMarketLink marketHashName={item.data.marketHashName} itemName={item.data.name} />
       </div>
 
       <Card>
