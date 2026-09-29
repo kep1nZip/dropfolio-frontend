@@ -98,6 +98,23 @@ export interface Price {
   fetchedAt: string;
 }
 
+/** `GET /prices/{itemId}/history?range=` — the ranges the backend accepts (lower-case). */
+export type PriceHistoryRange = '7d' | '30d' | '90d' | '1y' | 'all';
+
+/** `pricing/dto/PriceHistoryPointResponse.java` — only `available` snapshots; never a placeholder 0. */
+export interface PriceHistoryPoint {
+  priceUsd: number;
+  fetchedAt: string;
+}
+
+/** `pricing/dto/PriceHistoryResponse.java` — `points` are ascending by `fetchedAt` and may be empty. */
+export interface PriceHistory {
+  itemId: number;
+  provider: string | null;
+  range: PriceHistoryRange;
+  points: PriceHistoryPoint[];
+}
+
 // ---------------------------------------------------------------------------- drops
 
 /** `drop/dto/DropItemRef.java` */

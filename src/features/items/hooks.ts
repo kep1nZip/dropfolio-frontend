@@ -1,9 +1,15 @@
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query-keys';
-import { createItem, getItem, getPrice, listItems, updateItem } from './api';
-import type { CreateItemPayload, Item, ItemListParams, UpdateItemPayload } from '@/types/domain';
+import { createItem, getItem, getPrice, getPriceHistory, listItems, updateItem } from './api';
+import type {
+  CreateItemPayload,
+  Item,
+  ItemListParams,
+  PriceHistoryRange,
+  UpdateItemPayload,
+} from '@/types/domain';
 
 export function useItems(params: ItemListParams, enabled = true) {
   return useQuery({
@@ -31,6 +37,21 @@ export function useItemPrice(itemId: number | null) {
     queryFn: () => getPrice(itemId as number),
     enabled: itemId !== null,
     staleTime: 60_000,
+  });
+}
+
+/**
+ * One request per selected range (never "fetch everything, slice in the browser"). The previous
+ * range's data is kept on screen while the next one loads so switching 7D/30D/… does not flash
+ * the chart away; `isPlaceholderData` tells the UI to dim it meanwhile.
+ */
+export function usePriceHistory(itemId: number | null, range: PriceHistoryRange) {
+  return useQuery({
+    queryKey: queryKeys.prices.history(itemId ?? 0, range),
+    queryFn: () => getPriceHistory(itemId as number, range),
+    enabled: itemId !== null,
+    staleTime: 60_000,
+    placeholderData: keepPreviousData,
   });
 }
 

@@ -2,13 +2,24 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query-keys';
-import { createDrop, deleteDrop, listDrops, updateDrop } from './api';
+import { createDrop, deleteDrop, listDrops, listDropsForItem, updateDrop } from './api';
+import { aggregateHoldings } from './holdings';
 import type { CreateDropPayload, Drop, DropListParams, UpdateDropPayload } from '@/types/domain';
 
 export function useDrops(params: DropListParams) {
   return useQuery({
     queryKey: queryKeys.drops.list(params),
     queryFn: () => listDrops(params),
+  });
+}
+
+/** The signed-in user's aggregated holdings of one item (quantity, acquisition and current value). */
+export function useItemHoldings(itemId: number | null, itemName: string | null) {
+  return useQuery({
+    queryKey: queryKeys.drops.holdings(itemId ?? 0),
+    queryFn: () => listDropsForItem(itemId as number, itemName as string),
+    enabled: itemId !== null && itemName !== null,
+    select: aggregateHoldings,
   });
 }
 

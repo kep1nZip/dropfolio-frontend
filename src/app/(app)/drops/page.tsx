@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useDrops } from '@/features/drops/hooks';
@@ -208,17 +209,23 @@ export default function DropsPage() {
                 {query.data.items.map((drop) => (
                   <Tr key={drop.id}>
                     <Td>
-                      <span className="flex items-center gap-3">
+                      <Link
+                        href={`/items/${drop.item.id}?from=drops`}
+                        aria-label={`View price details for ${drop.item.name}`}
+                        className="group flex w-fit items-center gap-3"
+                      >
                         <ItemThumb
                           name={drop.item.name}
                           type={drop.item.type}
                           iconUrl={drop.item.iconUrl}
                         />
                         <span className="flex flex-col gap-0.5">
-                          <span className="text-sm text-ink">{drop.item.name}</span>
+                          <span className="text-sm text-ink group-hover:text-accent-text group-hover:underline">
+                            {drop.item.name}
+                          </span>
                           <ItemTypeTag type={drop.item.type} />
                         </span>
-                      </span>
+                      </Link>
                     </Td>
                     <Td>{formatDate(drop.acquisitionDate)}</Td>
                     <Td numeric>{drop.quantity}</Td>

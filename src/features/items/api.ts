@@ -6,6 +6,8 @@ import type {
   Item,
   ItemListParams,
   Price,
+  PriceHistory,
+  PriceHistoryRange,
   UpdateItemPayload,
 } from '@/types/domain';
 
@@ -27,6 +29,11 @@ export function getItem(id: number): Promise<Item> {
 
 export function getPrice(itemId: number): Promise<Price> {
   return getOne<Price>(`/prices/${itemId}`);
+}
+
+/** Stored snapshots only (`item_prices`); the browser never talks to Steam. */
+export function getPriceHistory(itemId: number, range: PriceHistoryRange): Promise<PriceHistory> {
+  return getOne<PriceHistory>(`/prices/${itemId}/history`, { params: { range } });
 }
 
 export function createItem(payload: CreateItemPayload): Promise<Item> {

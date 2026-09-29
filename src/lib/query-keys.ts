@@ -6,6 +6,7 @@ import type {
   DropListParams,
   ItemListParams,
   NotificationListParams,
+  PriceHistoryRange,
   SyncJobListParams,
 } from '@/types/domain';
 
@@ -25,12 +26,16 @@ export const queryKeys = {
   prices: {
     all: ['prices'] as const,
     detail: (itemId: number) => ['prices', itemId] as const,
+    history: (itemId: number, range: PriceHistoryRange) =>
+      ['prices', itemId, 'history', range] as const,
   },
 
   drops: {
     all: ['drops'] as const,
     list: (params: DropListParams) => ['drops', 'list', params] as const,
     detail: (id: number) => ['drops', 'detail', id] as const,
+    /** All of the current user's drops of one item — invalidated with `drops.all`. */
+    holdings: (itemId: number) => ['drops', 'holdings', itemId] as const,
   },
 
   portfolio: {
