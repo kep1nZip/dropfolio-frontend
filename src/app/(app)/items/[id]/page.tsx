@@ -9,7 +9,7 @@ import { useItemHoldings } from '@/features/drops/hooks';
 import { HoldingsSummary } from '@/features/drops/components/HoldingsSummary';
 import { PriceHistoryChart } from '@/features/items/components/PriceHistoryChart';
 import { PriceRangeSelector } from '@/features/items/components/PriceRangeSelector';
-import { SteamMarketLink } from '@/features/items/components/SteamMarketLink';
+import { MarketplaceLinks } from '@/features/items/components/MarketplaceLinks';
 import {
   computePriceChange,
   DEFAULT_PRICE_RANGE,
@@ -93,9 +93,9 @@ function ItemDetail({ params }: { params: Promise<{ id: string }> }) {
         {back.label}
       </Link>
 
-      <div className="flex items-start gap-4">
+      <div className="flex flex-wrap items-start gap-4">
         <ItemThumb name={item.data.name} type={item.data.type} iconUrl={item.data.iconUrl} size={72} />
-        <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex min-w-[10rem] flex-1 flex-col gap-2">
           <h1 className="break-words text-xl font-semibold tracking-tight text-ink">{item.data.name}</h1>
           <div className="flex flex-wrap items-center gap-3">
             <ItemTypeTag type={item.data.type} />
@@ -107,7 +107,7 @@ function ItemDetail({ params }: { params: Promise<{ id: string }> }) {
             )}
           </div>
         </div>
-        <SteamMarketLink marketHashName={item.data.marketHashName} itemName={item.data.name} />
+        <MarketplaceLinks marketHashName={item.data.marketHashName} itemName={item.data.name} />
       </div>
 
       <Card>
