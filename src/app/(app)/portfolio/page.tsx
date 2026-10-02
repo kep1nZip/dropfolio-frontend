@@ -16,8 +16,9 @@ import { EmptyState, ErrorState, Skeleton, TableSkeleton } from '@/components/ui
 import { GRADE_COLOR, ItemTypeTag } from '@/components/ui/Badge';
 import { useToast } from '@/components/ui/Toast';
 import { getErrorMessage } from '@/lib/api-error';
-import { formatNumber, formatUsd, PRICE_UNAVAILABLE } from '@/utils/format';
+import { formatNumber, PRICE_UNAVAILABLE } from '@/utils/format';
 import type { ItemType, PortfolioBreakdownItem } from '@/types/domain';
+import { useMoney } from '@/features/currency/hooks';
 
 const SORTS = [
   { value: 'totalValueUsd,desc', label: 'Highest value' },
@@ -27,6 +28,7 @@ const SORTS = [
 ] as const;
 
 export default function PortfolioPage() {
+  const formatMoney = useMoney();
   const summary = usePortfolioSummary();
   const controls = useListControls<{ type: ItemType | undefined }>(
     { type: undefined },
@@ -51,7 +53,7 @@ export default function PortfolioPage() {
       <div className="grid gap-4 sm:grid-cols-3">
         <SummaryTile
           label="Total value"
-          value={summary.data ? formatUsd(summary.data.totalValueUsd) : null}
+          value={summary.data ? formatMoney(summary.data.totalValueUsd) : null}
           emphasis
         />
         <SummaryTile
@@ -144,11 +146,11 @@ export default function PortfolioPage() {
                     </Td>
                     <Td numeric>{row.totalQuantity}</Td>
                     <Td numeric className="text-ink-dim">
-                      {row.priceAvailable ? formatUsd(row.currentPriceUsd) : PRICE_UNAVAILABLE}
+                      {row.priceAvailable ? formatMoney(row.currentPriceUsd) : PRICE_UNAVAILABLE}
                     </Td>
                     <Td numeric>
                       {row.priceAvailable ? (
-                        formatUsd(row.totalValueUsd)
+                        formatMoney(row.totalValueUsd)
                       ) : (
                         <span title="No current price available" className="text-ink-muted">
                           {PRICE_UNAVAILABLE}
@@ -187,6 +189,7 @@ function HoldingsChart({
   /** True only when the loaded page is the entire result set — see comment above. */
   isSinglePage: boolean;
 }) {
+  const formatMoney = useMoney();
   const ranked = items
     .filter((item) => item.priceAvailable && item.totalValueUsd !== null)
     .sort((a, b) => (b.totalValueUsd ?? 0) - (a.totalValueUsd ?? 0))
@@ -219,7 +222,7 @@ function HoldingsChart({
                 />
               </span>
               <span className="numeric w-20 shrink-0 text-right text-sm text-ink">
-                {formatUsd(item.totalValueUsd)}
+                {formatMoney(item.totalValueUsd)}
               </span>
             </li>
           );

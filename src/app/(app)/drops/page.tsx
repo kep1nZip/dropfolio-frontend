@@ -18,8 +18,9 @@ import { Pagination } from '@/components/ui/Pagination';
 import { EmptyState, ErrorState, TableSkeleton } from '@/components/ui/States';
 import { ItemThumb } from '@/components/ui/ItemThumb';
 import { ItemTypeTag } from '@/components/ui/Badge';
-import { formatDate, formatUsd, PRICE_UNAVAILABLE } from '@/utils/format';
+import { formatDate, PRICE_UNAVAILABLE } from '@/utils/format';
 import type { Drop, ItemType } from '@/types/domain';
+import { useMoney } from '@/features/currency/hooks';
 
 const SORTS = [
   { value: 'acquisitionDate,desc', label: 'Newest first' },
@@ -45,6 +46,7 @@ const INITIAL_FILTERS: DropFilters = {
 };
 
 export default function DropsPage() {
+  const formatMoney = useMoney();
   const controls = useListControls<DropFilters>(INITIAL_FILTERS, 'acquisitionDate,desc');
   const [showFilters, setShowFilters] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
@@ -230,11 +232,11 @@ export default function DropsPage() {
                     <Td>{formatDate(drop.acquisitionDate)}</Td>
                     <Td numeric>{drop.quantity}</Td>
                     <Td numeric className="text-ink-dim">
-                      {formatUsd(drop.acquisitionValueUsd)}
+                      {formatMoney(drop.acquisitionValueUsd)}
                     </Td>
                     <Td numeric>
                       {drop.priceAvailable ? (
-                        formatUsd(drop.currentValueUsd)
+                        formatMoney(drop.currentValueUsd)
                       ) : (
                         <span
                           title="No current price available for this item"

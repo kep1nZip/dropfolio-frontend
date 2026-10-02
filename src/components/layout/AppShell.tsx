@@ -5,10 +5,11 @@ import { Menu, X } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { UserMenu } from './UserMenu';
 import { NotificationBell } from './NotificationBell';
+import { CurrencySelector } from './CurrencySelector';
 
 /**
- * Fixed rail on desktop, a drawer under `lg`. The top bar carries only the two things that are
- * global to every screen — notifications and the account menu — so page-level actions stay on
+ * Fixed rail on desktop, a drawer under `lg`. The top bar carries only the things that are
+ * global to every screen — display currency, notifications and the account menu — so page-level actions stay on
  * the page where their context is.
  */
 export function AppShell({ children }: { children: ReactNode }) {
@@ -48,6 +49,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </button>
           <span className="text-sm font-semibold text-ink lg:hidden">Dropfolio</span>
           <div className="ml-auto flex items-center gap-1">
+            <CurrencySelector />
             <NotificationBell />
             <UserMenu />
           </div>

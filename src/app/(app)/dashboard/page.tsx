@@ -10,7 +10,8 @@ import { ItemThumb } from '@/components/ui/ItemThumb';
 import { Table, Td, Th, Tr } from '@/components/ui/Table';
 import { EmptyState, ErrorState, Skeleton, TableSkeleton } from '@/components/ui/States';
 import { Button } from '@/components/ui/Button';
-import { formatDate, formatNumber, formatUsd } from '@/utils/format';
+import { formatDate, formatNumber } from '@/utils/format';
+import { useMoney } from '@/features/currency/hooks';
 
 const QUICK_ACTIONS = [
   { href: '/drops', label: 'Add a drop', description: 'Log something you picked up', icon: Boxes },
@@ -20,6 +21,7 @@ const QUICK_ACTIONS = [
 ] as const;
 
 export default function DashboardPage() {
+  const formatMoney = useMoney();
   const recentDrops = useDrops({ page: 1, size: 5, sort: 'acquisitionDate,desc' });
 
   return (
@@ -95,7 +97,7 @@ export default function DashboardPage() {
                   </Td>
                   <Td>{formatDate(drop.acquisitionDate)}</Td>
                   <Td numeric>{drop.quantity}</Td>
-                  <Td numeric>{formatUsd(drop.currentValueUsd)}</Td>
+                  <Td numeric>{formatMoney(drop.currentValueUsd)}</Td>
                 </Tr>
               ))}
             </tbody>
@@ -138,6 +140,7 @@ function QuickActions() {
  * in a tooltip — PRD §45: a portfolio total computed from partly-unpriced items has to say so.
  */
 function PortfolioValue() {
+  const formatMoney = useMoney();
   const { data, isPending, isError, error, refetch } = usePortfolioSummary();
 
   if (isPending) {
@@ -161,7 +164,7 @@ function PortfolioValue() {
     <Card className="px-6 py-8">
       <p className="text-sm text-ink-muted">Total portfolio value</p>
       <p className="numeric stat-hero mt-2 font-semibold tracking-tight text-ink">
-        {formatUsd(data.totalValueUsd)}
+        {formatMoney(data.totalValueUsd)}
       </p>
       <div className="mt-4 h-px w-16 bg-accent" />
       <p className="mt-4 text-sm text-ink-muted">
@@ -177,6 +180,7 @@ function PortfolioValue() {
 }
 
 function WeeklyDrop() {
+  const formatMoney = useMoney();
   const { data, isPending } = usePortfolioSummary();
 
   return (
@@ -204,7 +208,7 @@ function WeeklyDrop() {
             <div className="border-t border-line pt-3">
               <p className="text-xs text-ink-muted">Estimated value</p>
               <p className="numeric text-lg text-ink">
-                {formatUsd(data?.weeklyDrop?.estimatedValueUsd ?? null)}
+                {formatMoney(data?.weeklyDrop?.estimatedValueUsd ?? null)}
               </p>
             </div>
           </>
@@ -215,6 +219,7 @@ function WeeklyDrop() {
 }
 
 function Statistics() {
+  const formatMoney = useMoney();
   const { data, isPending } = usePortfolioSummary();
 
   return (
@@ -230,7 +235,7 @@ function Statistics() {
           label="Highest-value item"
           value={isPending ? null : (data?.highestValueItem?.name ?? '—')}
           hint={
-            data?.highestValueItem ? formatUsd(data.highestValueItem.valueUsd) : undefined
+            data?.highestValueItem ? formatMoney(data.highestValueItem.valueUsd) : undefined
           }
         />
         <Stat

@@ -18,6 +18,7 @@ import { useToast } from '@/components/ui/Toast';
 import { getErrorMessage } from '@/lib/api-error';
 import { formatDate, formatUsd } from '@/utils/format';
 import type { Alert, AlertStatus } from '@/types/domain';
+import { useActiveCurrency, useMoney } from '@/features/currency/hooks';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All alerts' },
@@ -27,6 +28,8 @@ const STATUS_OPTIONS = [
 ] as const;
 
 export default function AlertsPage() {
+  const formatMoney = useMoney();
+  const { active } = useActiveCurrency();
   const controls = useListControls<{ status: AlertStatus | undefined }>(
     { status: undefined },
     'createdAt,desc',
@@ -127,7 +130,14 @@ export default function AlertsPage() {
                 {query.data.items.map((alert) => (
                   <Tr key={alert.id}>
                     <Td>{alert.item.name}</Td>
-                    <Td numeric>{formatUsd(alert.targetPriceUsd)}</Td>
+                    <Td numeric>
+                      {formatMoney(alert.targetPriceUsd)}
+                      {active !== 'USD' ? (
+                        <span className="block text-[11px] font-normal text-ink-muted">
+                          {formatUsd(alert.targetPriceUsd)} target
+                        </span>
+                      ) : null}
+                    </Td>
                     <Td className="text-xs text-ink-muted">
                       {[alert.notifyInApp ? 'In-app' : null, alert.notifyEmail ? 'Email' : null]
                         .filter(Boolean)

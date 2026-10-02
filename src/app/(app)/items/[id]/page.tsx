@@ -25,10 +25,10 @@ import {
   formatDate,
   formatDateTime,
   formatRelativeTime,
-  formatUsd,
   PRICE_UNAVAILABLE,
 } from '@/utils/format';
 import type { PriceHistoryRange } from '@/types/domain';
+import { useMoney } from '@/features/currency/hooks';
 
 /**
  * Item detail: current Steam Market price + stored price history + the viewer's own holdings.
@@ -46,6 +46,7 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
 }
 
 function ItemDetail({ params }: { params: Promise<{ id: string }> }) {
+  const formatMoney = useMoney();
   const { id } = use(params);
   const parsed = Number(id);
   const itemId = Number.isInteger(parsed) && parsed > 0 ? parsed : null;
@@ -129,7 +130,7 @@ function ItemDetail({ params }: { params: Promise<{ id: string }> }) {
             ) : price.data.priceAvailable ? (
               <>
                 <p className="numeric stat-secondary mt-1 font-semibold text-ink">
-                  {formatUsd(price.data.priceUsd)}
+                  {formatMoney(price.data.priceUsd)}
                 </p>
                 <p className="mt-2 text-xs text-ink-muted" title={formatDateTime(price.data.fetchedAt)}>
                   Updated {formatRelativeTime(price.data.fetchedAt)}
@@ -200,7 +201,7 @@ function ItemDetail({ params }: { params: Promise<{ id: string }> }) {
           ) : points.length === 1 ? (
             <ChartMessage
               title="Not enough historical data yet."
-              detail={`Only one snapshot is stored so far: ${formatUsd(points[0]?.priceUsd)} on ${formatDateTime(points[0]?.fetchedAt)}. A chart appears once there are at least two.`}
+              detail={`Only one snapshot is stored so far: ${formatMoney(points[0]?.priceUsd)} on ${formatDateTime(points[0]?.fetchedAt)}. A chart appears once there are at least two.`}
             />
           ) : (
             <div className={history.isPlaceholderData ? 'opacity-60 transition-opacity' : 'transition-opacity'}>

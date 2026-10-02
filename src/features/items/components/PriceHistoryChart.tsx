@@ -2,8 +2,9 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent } from 'react';
-import { formatDateTime, formatUsd } from '@/utils/format';
+import { formatDateTime } from '@/utils/format';
 import type { PriceHistoryPoint } from '@/types/domain';
+import { useMoney } from '@/features/currency/hooks';
 
 const HEIGHT = 260;
 const MARGIN = { top: 16, right: 16, bottom: 28, left: 60 };
@@ -26,6 +27,7 @@ interface Plotted {
  * Width follows its container (ResizeObserver); hover, touch and arrow keys all drive the tooltip.
  */
 export function PriceHistoryChart({ points }: { points: PriceHistoryPoint[] }) {
+  const formatMoney = useMoney();
   const containerRef = useRef<HTMLDivElement>(null);
   const gradientId = useId();
   const [width, setWidth] = useState(0);
@@ -123,7 +125,7 @@ export function PriceHistoryChart({ points }: { points: PriceHistoryPoint[] }) {
   };
 
   const prices = points.map((point) => point.priceUsd);
-  const summary = `Price history, ${points.length} snapshots, low ${formatUsd(Math.min(...prices))}, high ${formatUsd(Math.max(...prices))}. Use left and right arrow keys to inspect points.`;
+  const summary = `Price history, ${points.length} snapshots, low ${formatMoney(Math.min(...prices))}, high ${formatMoney(Math.max(...prices))}. Use left and right arrow keys to inspect points.`;
 
   return (
     <div ref={containerRef} className="relative w-full select-none" style={{ height: HEIGHT }}>
@@ -167,7 +169,7 @@ export function PriceHistoryChart({ points }: { points: PriceHistoryPoint[] }) {
                   fontSize="11"
                   fill="var(--color-ink-muted)"
                 >
-                  {formatUsd(tick.value)}
+                  {formatMoney(tick.value)}
                 </text>
               </g>
             ))}
@@ -226,7 +228,7 @@ export function PriceHistoryChart({ points }: { points: PriceHistoryPoint[] }) {
                 transform: 'translateX(-50%)',
               }}
             >
-              <p className="numeric text-sm font-semibold text-ink">{formatUsd(active.point.priceUsd)}</p>
+              <p className="numeric text-sm font-semibold text-ink">{formatMoney(active.point.priceUsd)}</p>
               <p className="whitespace-nowrap text-xs text-ink-muted">
                 {formatDateTime(active.point.fetchedAt)}
               </p>

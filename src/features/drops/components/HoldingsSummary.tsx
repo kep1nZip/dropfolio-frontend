@@ -3,8 +3,9 @@
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/States';
-import { formatNumber, formatUsd } from '@/utils/format';
+import { formatNumber } from '@/utils/format';
 import type { Holdings } from '../holdings';
+import { useMoney } from '@/features/currency/hooks';
 
 /**
  * The signed-in user's own position in one item. Sourced from `GET /drops` (authenticated,
@@ -21,6 +22,7 @@ export function HoldingsSummary({
   holdings: Holdings | undefined;
   onRetry: () => void;
 }) {
+  const formatMoney = useMoney();
   return (
     <Card>
       <CardHeader title="Your holdings" description="Aggregated across all your drops of this item." />
@@ -42,8 +44,8 @@ export function HoldingsSummary({
       ) : (
         <dl className="flex flex-col">
           <Row label="Quantity" value={formatNumber(holdings.quantity)} />
-          <Row label="Acquisition value" value={formatUsd(holdings.acquisitionValueUsd)} />
-          <Row label="Current value" value={formatUsd(holdings.currentValueUsd)} />
+          <Row label="Acquisition value" value={formatMoney(holdings.acquisitionValueUsd)} />
+          <Row label="Current value" value={formatMoney(holdings.currentValueUsd)} />
           {holdings.dropsWithoutAcquisitionValue > 0 ? (
             <p className="px-5 py-3 text-xs text-ink-muted">
               {holdings.dropsWithoutAcquisitionValue === holdings.dropCount

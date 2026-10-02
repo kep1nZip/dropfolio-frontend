@@ -17,6 +17,8 @@ import type {
 export const queryKeys = {
   currentUser: ['currentUser'] as const,
 
+  exchangeRates: ['exchangeRates'] as const,
+
   items: {
     all: ['items'] as const,
     list: (params: ItemListParams) => ['items', 'list', params] as const,
